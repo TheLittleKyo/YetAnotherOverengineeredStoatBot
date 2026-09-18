@@ -1,13 +1,20 @@
 # Dependencies
 node_modules/
 
-# Environment variables
+# Environment variables (keep .env.example tracked)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
-# Data directory (tickets are stored here)
+# Data directory (tickets, settings, secrets, backups are stored here)
 data/
+
+# SQLite database (belt-and-suspenders; normally lives under data/)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
 
 # Temporary files
 temp/
@@ -30,6 +37,7 @@ Thumbs.db
 # Build artifacts
 dist/
 build/
+*.tsbuildinfo
 
 # Managed yt-dlp binary (downloaded by the bot)
 bin/
