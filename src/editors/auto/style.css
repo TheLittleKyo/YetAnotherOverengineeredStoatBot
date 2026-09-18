@@ -1,0 +1,63 @@
+/* Automation editor — sits on top of /shared.css tokens + primitives. */
+
+.wrap {
+  max-width: 1140px; margin: 0 auto; padding: 26px clamp(16px, 4vw, 36px) 56px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-content: start;
+}
+
+.page-head { grid-column: 1 / -1; margin-bottom: 2px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.page-head h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.page-head p { margin: 4px 0 0; max-width: 64ch; }
+
+.card { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+@media (max-width: 980px) { .wrap { grid-template-columns: 1fr; } .card { grid-column: 1 / -1; } }
+
+.card-head { display: flex; gap: 13px; align-items: flex-start; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+/* Neutral icon tile: red is reserved for focal controls, not every card header. */
+.card-icon { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: var(--r-sm); background: var(--surface-2); color: var(--text-muted); }
+.card-icon svg { width: 16px; height: 16px; }
+.card-head h2 { font-size: 15px; font-weight: 700; }
+.card-head p { margin: 3px 0 0; font-size: 13px; }
+.card-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+.row-end { display: flex; justify-content: flex-end; gap: 10px; margin-top: 2px; }
+.sub-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--line); }
+
+.textarea { resize: vertical; min-height: 46px; font: inherit; line-height: 1.45; }
+
+.check-row { display: flex; align-items: center; gap: 9px; font-size: 13px; }
+.check-row input { width: 16px; height: 16px; accent-color: var(--accent-ink); }
+.check-field { align-self: end; padding-bottom: 8px; }
+
+/* Segmented match selector — wraps on small widths. */
+.segmented { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.match-seg { width: 100%; }
+.seg { border: 0; height: 30px; padding: 0 13px; border-radius: var(--r-xs); font: inherit; font-weight: 600; font-size: 12.5px; color: var(--text-muted); background: transparent; cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); white-space: nowrap; }
+.seg:hover { color: var(--text); }
+.seg.is-active { background: var(--control-active); color: var(--accent-ink); box-shadow: var(--shadow-sm); }
+
+/* Existing-rule list */
+.rule-list { display: flex; flex-direction: column; gap: 8px; }
+.rule-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md); }
+.rule-row.is-off .rule-main { opacity: 0.55; }
+.rule-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.rule-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.rule-trigger { font-size: 13px; font-weight: 700; background: var(--surface); border: 1px solid var(--line); padding: 2px 8px; border-radius: var(--r-sm); max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.rule-response { font-size: 13px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rule-scope { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+.rule-scope svg { width: 12px; height: 12px; }
+.rule-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); background: var(--surface-3); padding: 2px 8px; border-radius: var(--r-pill); }
+
+.icon-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.icon-btn:hover { background: var(--surface-3); color: var(--text); }
+.icon-btn.is-on { color: var(--ok); }
+.icon-btn.icon-danger:hover { background: rgba(242, 89, 107, 0.14); color: var(--danger); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+.empty-line { padding: 4px 0; }

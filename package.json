@@ -1,0 +1,44 @@
+{
+  "name": "yet-another-overengineered-stoat-bot",
+  "version": "1.1.0",
+  "description": "A complete ticket system bot for Stoat using stoatbot.js and TypeScript",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "clear:data": "tsx src/clear-data.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/*.test.ts\""
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "dependencies": {
+    "@livekit/rtc-node": "^0.13.33",
+    "@resvg/resvg-js": "^2.6.2",
+    "dotenv": "^17.4.2",
+    "esbuild": "^0.28.2",
+    "fflate": "^0.8.3",
+    "marked": "^18.0.9",
+    "puppeteer": "^25.8.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
+    "stoatbot.js": "0.4.8",
+    "youtubei.js": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "stoat",
+    "bot",
+    "ticket",
+    "support"
+  ],
+  "author": "",
+  "license": "GPL-3.0-or-later"
+}

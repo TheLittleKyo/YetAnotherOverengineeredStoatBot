@@ -1,0 +1,378 @@
+/* ============================================================
+   Role editor — three-column layout.
+   Palette, theme, and base styles come from /shared.css.
+   ============================================================ */
+
+html, body, #root {
+  margin: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; color: inherit; }
+button { border: 0; background: transparent; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+::selection { background: var(--accent-soft); color: var(--text); }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app {
+  height: 100vh;
+  width: min(1480px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 16px 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  overflow: hidden;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 4px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow { display: none; } /* dropped */
+.hero h1 { margin: 0 0 4px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.hero p { color: var(--text-muted); line-height: 1.45; margin: 0; font-size: 13px; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.primary, .secondary, .danger {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius);
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.primary { background: var(--accent); color: var(--accent-fg); }
+.primary:hover:not(:disabled) { background: var(--accent-hover); }
+.primary:disabled { background: var(--panel-3); color: var(--text-dim); opacity: 1; }
+.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+.secondary:hover:not(:disabled) { background: var(--panel-3); border-color: var(--border-strong); }
+.danger { background: var(--danger-soft); border: 1px solid var(--danger-border); color: var(--danger-fg); }
+.danger:hover:not(:disabled) { background: rgba(242, 89, 107, 0.2); }
+
+/* ============================================================
+   Workspace (3 columns)
+   ============================================================ */
+.workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(250px, 320px) minmax(420px, 1fr) minmax(300px, 400px);
+  gap: 12px;
+  overflow: hidden;
+}
+.panel {
+  min-height: 0;
+  padding: 14px;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.role-panel, .scroll-panel, .preview-panel { height: 100%; display: flex; flex-direction: column; }
+.scroll-panel, .role-list { overflow: auto; }
+
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex: 0 0 auto; }
+.panel-head.compact { margin-bottom: 10px; }
+.panel h2 { margin: 0 0 2px; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+.panel p { margin: 0; font-size: 12px; color: var(--text-muted); }
+
+/* ============================================================
+   Form fields
+   ============================================================ */
+.field { display: grid; gap: 5px; margin-bottom: 10px; color: var(--text-muted); font-size: 12px; font-weight: 500; flex: 0 0 auto; }
+.field input, .color-stop input {
+  width: 100%;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 7px 11px;
+  line-height: 20px;
+  outline: none;
+  font-size: 13px;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.field input:focus, .color-stop input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ============================================================
+   Role list
+   ============================================================ */
+.role-list { display: grid; align-content: start; gap: 4px; min-height: 0; padding-right: 4px; }
+.role-row {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  padding: 7px 8px;
+  transition: background 0.1s ease, border-color 0.1s ease;
+}
+.role-row:hover { background: var(--panel-2); }
+.role-row.selected { border-color: var(--border-focus); background: var(--accent-soft); }
+.role-row strong { display: block; font-size: 13px; font-weight: 500; color: var(--text); }
+.role-row small { display: block; margin-top: 1px; color: var(--text-dim); font-size: 11px; overflow-wrap: anywhere; font-family: var(--font-mono); }
+.role-swatch { width: 18px; height: 18px; border-radius: 999px; border: 1px solid var(--line-strong); background: #64748b; }
+
+.empty {
+  min-height: 90px;
+  display: grid; place-items: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+}
+.empty.compact { min-height: 70px; }
+
+/* ============================================================
+   Toggles + color stops
+   ============================================================ */
+.toggle-row {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 36px;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+}
+.toggle-row input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+.color-stack { display: grid; gap: 6px; margin-bottom: 10px; }
+.color-stop { display: grid; grid-template-columns: 44px 1fr 32px; gap: 6px; align-items: center; }
+.color-stop input[type="color"] { height: 32px; padding: 3px; cursor: pointer; }
+.icon { width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border-radius: var(--radius); }
+.icon.danger { color: var(--danger-fg); }
+.icon.danger:hover:not(:disabled) { background: var(--danger-soft); }
+.add-stop { width: 100%; }
+
+.action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 10px 0 14px; }
+
+/* ============================================================
+   Permissions
+   ============================================================ */
+.permission-editor { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.permission-tools { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.permission-tools .secondary { min-height: 28px; padding: 0 10px; font-size: 12px; }
+
+.permission-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--input-bg);
+}
+.permission-row > span { font-size: 12px; font-weight: 500; color: var(--text); }
+.permission-buttons { display: grid; grid-template-columns: repeat(3, 60px); gap: 4px; }
+.permission-buttons button {
+  min-height: 26px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+.permission-buttons button:hover { background: var(--panel-3); color: var(--text); }
+.permission-buttons button.selected { border-color: var(--border-strong); background: var(--panel-3); color: var(--text); }
+.permission-buttons button.allow.selected { border-color: var(--ok-border); background: var(--ok-soft); color: var(--ok-fg); }
+.permission-buttons button.deny.selected { border-color: var(--danger-border); background: var(--danger-soft); color: var(--danger-fg); }
+
+/* ============================================================
+   Editor tabs + bot permissions
+   ============================================================ */
+.editor-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  margin-bottom: 14px;
+  flex: 0 0 auto;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.editor-tabs button {
+  flex: 1;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--r-xs);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 550;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.editor-tabs button:hover:not(:disabled) { color: var(--text); }
+.editor-tabs button.is-active { background: var(--control-active); color: var(--text); box-shadow: var(--shadow-sm); }
+.tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+.everyone-swatch { display: grid; place-items: center; background: var(--panel-3); color: var(--text-muted); }
+.everyone-swatch svg { width: 11px; height: 11px; }
+
+.permission-tools .primary { min-height: 28px; padding: 0 12px; font-size: 12px; }
+.permission-tools svg { width: 13px; height: 13px; }
+
+.bot-perm-list { display: grid; gap: 14px; }
+.bot-perm-group { display: grid; gap: 6px; }
+.bot-perm-group-title {
+  padding: 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+.bot-perm-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--input-bg);
+}
+.bot-perm-text { display: grid; gap: 2px; min-width: 0; }
+.bot-perm-label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 550; color: var(--text); }
+.bot-perm-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 550;
+  color: var(--warn);
+}
+.bot-perm-tag svg { width: 11px; height: 11px; }
+.bot-perm-commands { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); overflow-wrap: anywhere; }
+.bot-perm-default { font-size: 11.5px; color: var(--text-dim); }
+
+.feature-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.feature-chip { padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 11.5px; font-weight: 550; }
+.feature-chip.allow { color: var(--ok-fg); background: var(--ok-soft); border-color: var(--ok-border); }
+.feature-chip.deny { color: var(--danger-fg); background: var(--danger-soft); border-color: var(--danger-border); }
+.rules-note p { line-height: 1.5; }
+
+/* ============================================================
+   Preview panel
+   ============================================================ */
+.preview-panel { overflow: auto; }
+.preview-card { display: grid; gap: 12px; }
+.role-badge {
+  justify-self: start;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+.role-gradient-text {
+  display: inline-block; max-width: 100%;
+  color: transparent; background-clip: text; -webkit-background-clip: text;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.role-color-text { display: inline-block; max-width: 100%; font-weight: 600; overflow-wrap: anywhere; }
+.gradient-strip { height: 100px; border-radius: var(--radius); box-shadow: inset 0 0 0 1px var(--line); }
+
+code {
+  display: block; white-space: pre-wrap; overflow-wrap: anywhere;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 9px 11px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.command-box, .result-box, .permission-summary {
+  display: grid; gap: 6px;
+  margin-top: 10px;
+  padding: 11px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+.command-box span, .result-box span { color: var(--text-muted); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.02em; }
+.permission-summary strong, .result-box strong { font-size: 13px; font-weight: 600; }
+
+/* ============================================================
+   Status toast
+   ============================================================ */
+.status {
+  position: fixed; left: 50%; bottom: 16px;
+  transform: translateX(-50%);
+  max-width: min(760px, calc(100% - 32px));
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+.status.show { opacity: 1; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1100px) {
+  html, body, #root { overflow: auto; height: auto; min-height: 100%; }
+  .app { height: auto; min-height: 100vh; overflow: visible; }
+  .hero { display: grid; }
+  .hero-actions { justify-content: flex-start; }
+  .workspace { grid-template-columns: 1fr; overflow: visible; }
+  .panel { max-height: none; }
+  .role-list, .scroll-panel, .preview-panel { max-height: 70vh; }
+}
+
+@media (max-width: 620px) {
+  .app { width: min(100% - 16px, 1480px); padding: 10px 0; }
+  .grid2, .action-grid, .permission-row, .bot-perm-row { grid-template-columns: 1fr; }
+  .permission-tools { justify-content: flex-start; }
+  .permission-buttons { grid-template-columns: repeat(3, 1fr); width: 100%; }
+}

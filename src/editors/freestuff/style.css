@@ -1,0 +1,93 @@
+/* Free-stuff editor. Palette, theme, and base styles come from /shared.css;
+   this file only adds layout and components. */
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+button { border: 0; background: transparent; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+::selection { background: var(--accent-soft); }
+
+
+.app { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 80px; }
+
+.hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 4px 0 22px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.hero h1 { margin: 0 0 6px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.hero p { color: var(--text-muted); line-height: 1.5; margin: 0; font-size: 13px; max-width: 640px; }
+.hero-actions { display: flex; align-items: center; gap: 8px; }
+.app > .feature-off { margin-bottom: 18px; }
+
+.primary, .secondary, .danger { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--radius); padding: 0 14px; font-size: 13px; font-weight: 600; transition: background 0.12s ease, border-color 0.12s ease; }
+.primary { background: var(--accent); color: var(--accent-fg); }
+.primary:hover:not(:disabled) { background: var(--accent-hover); }
+.primary:disabled { background: var(--panel-3); color: var(--text-dim); opacity: 1; }
+.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+.secondary:hover { background: var(--panel-3); border-color: var(--border-strong); }
+
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 18px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.panel h2 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+.panel p { margin: 0; font-size: 13px; color: var(--text-muted); }
+
+.field { display: grid; gap: 6px; margin-bottom: 14px; color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.field input, .field select { width: 100%; border: 1px solid var(--field-line); border-radius: var(--radius); background: var(--input-bg); color: var(--text); padding: 7px 11px; line-height: 20px; outline: none; font-size: 13px; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+.field input:focus, .field select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+.field input[type="range"] { padding: 0; accent-color: var(--accent); }
+.field input:disabled { opacity: 0.5; }
+.field .hint { color: var(--text-dim); font-weight: 400; font-size: 11px; margin-top: 2px; }
+.toggle-field { align-content: start; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.empty { min-height: 100px; display: grid; place-items: center; border: 1px dashed var(--border-strong); border-radius: var(--radius); color: var(--text-dim); text-align: center; font-size: 13px; padding: 16px; }
+
+/* Toggle switch */
+.switch { display: inline-flex; align-items: center; gap: 8px; padding: 3px; width: 42px; height: 24px; border-radius: 999px; background: var(--panel-3); border: 1px solid var(--border); position: relative; transition: background 0.14s ease; flex: none; }
+.switch .knob { width: 16px; height: 16px; border-radius: 50%; background: var(--text-dim); transition: transform 0.14s ease, background 0.14s ease; }
+.switch.on { background: var(--accent-soft); border-color: var(--border-focus); }
+.switch.on .knob { transform: translateX(18px); background: var(--accent); }
+.switch-wrap { display: inline-flex; align-items: center; gap: 8px; flex: none; }
+.switch-label { min-width: 52px; white-space: nowrap; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+
+/* Sources */
+.source-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.source-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel-2); transition: border-color 0.12s ease, background 0.12s ease; }
+.source-card.on { border-color: var(--border-focus); }
+.source-text { display: grid; gap: 3px; }
+.source-text strong { font-size: 14px; }
+.source-text span { font-size: 12px; color: var(--text-muted); }
+
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text-muted); font-size: 12px; font-weight: 500; text-transform: capitalize; transition: all 0.1s ease; }
+.chip:hover { border-color: var(--border-strong); color: var(--text); }
+.chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+
+/* Offer preview grid */
+.offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.offer-card { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--panel-2); text-decoration: none; color: inherit; transition: border-color 0.12s ease; }
+.offer-card:hover { border-color: var(--border-strong); }
+.offer-img { height: 104px; background-size: cover; background-position: center; background-color: var(--panel-3); }
+.offer-body { padding: 10px 12px; display: grid; gap: 6px; }
+/* Source label: neutral. The title and price carry the card, not a colored badge. */
+.offer-tag { justify-self: start; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: var(--r-xs); letter-spacing: 0.02em; background: var(--panel-3); color: var(--text-muted); }
+.offer-title { font-size: 13px; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.offer-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; font-size: 12px; }
+.offer-meta .price { font-weight: 700; color: var(--text); }
+.offer-meta .strike { text-decoration: line-through; color: var(--text-dim); font-size: 11px; }
+.offer-meta .plat { color: var(--text-muted); font-size: 11px; width: 100%; }
+.offer-link { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--accent-ink); font-weight: 500; }
+
+.status { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); max-width: min(680px, calc(100% - 32px)); padding: 8px 14px; border-radius: 999px; background: var(--surface-3); color: var(--text); border: 1px solid var(--border-strong); box-shadow: var(--shadow-lg); font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity 0.15s ease; z-index: 100; }
+.status.show { opacity: 1; }
+
+@media (max-width: 700px) {
+  .grid2, .source-row { grid-template-columns: 1fr; }
+  .hero { display: grid; }
+}

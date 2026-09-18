@@ -1,0 +1,268 @@
+/* ============================================================
+   Embed editor — layout and components.
+   Palette, theme, and base styles come from /shared.css.
+   ============================================================ */
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { border: 0; background: transparent; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+::selection { background: var(--accent-soft); color: var(--text); }
+
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 80px; }
+
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 0 22px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow { display: none; } /* dropped — was an "AI-designed" tic */
+.hero h1 { margin: 0 0 6px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.hero p, .panel p, .saved-card p { color: var(--text-muted); line-height: 1.5; margin: 0; font-size: 13px; }
+
+.hero-actions, .card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.primary, .secondary, .danger {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius);
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.primary { background: var(--accent); color: var(--accent-fg); }
+.primary:hover:not(:disabled) { background: var(--accent-hover); }
+.primary:disabled { background: var(--panel-3); color: var(--text-dim); opacity: 1; }
+.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+.secondary:hover:not(:disabled) { background: var(--panel-3); border-color: var(--border-strong); }
+.danger { background: var(--danger-soft); border: 1px solid var(--danger-border); color: var(--danger-fg); }
+.danger:hover:not(:disabled) { background: rgba(242, 89, 107, 0.2); }
+.primary:disabled { cursor: wait; }
+
+/* ============================================================
+   Workspace + panels
+   ============================================================ */
+.workspace { display: grid; grid-template-columns: minmax(360px, 520px) 1fr; gap: 18px; align-items: start; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.panel-head.compact { margin-bottom: 12px; }
+.panel h2 { margin: 0 0 4px; font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+
+/* ============================================================
+   Form fields
+   ============================================================ */
+.field { display: grid; gap: 6px; margin-bottom: 14px; color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.field input, .field textarea, .field select {
+  width: 100%;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 7px 11px;
+  line-height: 20px;
+  outline: none;
+  font-size: 13px;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.field textarea { min-height: 110px; resize: vertical; line-height: 1.5; font-family: var(--font); }
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.color-field input { height: 36px; padding: 3px; }
+.grid2 { display: grid; grid-template-columns: 140px 1fr; gap: 10px; }
+
+.send-box {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+}
+.send-box .send { width: 100%; }
+
+/* ============================================================
+   Preview
+   ============================================================ */
+.preview-wrap { position: sticky; top: 16px; }
+.chat-preview {
+  min-height: 220px;
+  border-radius: var(--radius);
+  background: var(--chat);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+.chat-preview.compact { min-height: 160px; padding: 12px; }
+
+.stoat-message-main { min-width: 0; }
+.message-content { margin: 0 0 8px; color: var(--text); overflow-wrap: anywhere; }
+
+.embed-card {
+  width: min(520px, 100%);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow: hidden;
+}
+.embed-main { display: flex; gap: 12px; padding: 12px 14px; }
+.embed-icon { width: 40px; height: 40px; object-fit: cover; border-radius: var(--radius); background: var(--panel-2); }
+.embed-body { min-width: 0; flex: 1; }
+.embed-title {
+  display: block; margin: 0 0 6px; color: var(--text);
+  font-size: 15px; font-weight: 600; text-decoration: none; overflow-wrap: anywhere;
+}
+a.embed-title { color: var(--accent-ink); }
+a.embed-title:hover { text-decoration: underline; }
+.embed-description { overflow-wrap: anywhere; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+.embed-media { display: block; max-width: 100%; max-height: 360px; margin-top: 12px; border-radius: var(--radius); object-fit: contain; background: var(--panel-2); }
+
+.empty-preview, .empty {
+  min-height: 140px;
+  display: grid; place-items: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  text-align: center;
+  font-size: 13px;
+  padding: 16px;
+}
+.empty-preview { width: min(520px, 100%); min-height: 110px; }
+
+/* ============================================================
+   Markdown rendering (matches chat preview)
+   ============================================================ */
+.markdown { font-size: 14px; line-height: 1.5; }
+.markdown p { margin: 0 0 8px; color: inherit; }
+.markdown p:last-child { margin-bottom: 0; }
+.markdown strong { color: var(--text); font-weight: 600; }
+.markdown em { font-style: italic; }
+.markdown s { color: var(--text-dim); }
+.markdown a { color: var(--accent-ink); text-decoration: none; word-break: break-word; }
+.markdown a:hover { text-decoration: underline; }
+.markdown code {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel-3);
+  color: var(--text);
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+.markdown pre {
+  margin: 0 0 9px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  overflow: auto;
+}
+.markdown pre code { display: block; border: 0; border-radius: 0; background: transparent; padding: 0; white-space: pre; }
+.markdown blockquote {
+  margin: 0 0 9px;
+  padding: 6px 10px;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--accent-soft);
+  color: var(--text-muted);
+}
+.markdown ul, .markdown ol { margin: 0 0 9px 20px; padding: 0; }
+.markdown li { margin: 2px 0; }
+
+/* Mentions: one neutral pill for users, channels, and roles. Only broadcast
+   mentions get a tint, since they actually ping everyone. */
+.mention {
+  display: inline-flex; align-items: center; max-width: 100%;
+  border-radius: 4px; padding: 0 5px;
+  background: var(--panel-3); color: var(--text);
+  font-weight: 600; vertical-align: baseline;
+}
+.mention.broadcast { background: rgba(240, 179, 74, 0.16); color: var(--warn); }
+
+/* ============================================================
+   Saved embeds library
+   ============================================================ */
+.library { margin-top: 22px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.saved-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel-2);
+  overflow: hidden;
+  transition: border-color 0.12s ease;
+}
+.saved-card:hover { border-color: var(--border-strong); }
+.saved-card .chat-preview { border: 0; border-radius: 0; min-height: 160px; }
+.saved-body { padding: 14px; }
+.saved-body h3 {
+  margin: 0 0 4px;
+  font-size: 14px; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.saved-body p { font-size: 12px; margin-bottom: 12px; }
+.card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.card-actions button { font-size: 12px; min-height: 30px; padding: 0 10px; }
+
+/* ============================================================
+   Status toast
+   ============================================================ */
+.status {
+  position: fixed; left: 50%; bottom: 24px;
+  transform: translateX(-50%);
+  max-width: min(680px, calc(100% - 32px));
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 100;
+}
+.status.show { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .hero { display: grid; padding: 4px 0 18px; }
+  .workspace { grid-template-columns: 1fr; }
+  .preview-wrap { position: static; }
+  .grid2 { grid-template-columns: 1fr; }
+}

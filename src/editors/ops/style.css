@@ -1,0 +1,98 @@
+/* Ops editor — sits on top of /shared.css tokens + primitives. */
+
+.wrap {
+  max-width: 1140px; margin: 0 auto; padding: 26px clamp(16px, 4vw, 36px) 56px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-content: start;
+}
+
+.page-head { grid-column: 1 / -1; margin-bottom: 2px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.page-head h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.page-head p { margin: 4px 0 0; max-width: 60ch; }
+
+/* Backups span the top; the two command builders share the row below.
+   Ordered by class, not position, so adding a card never reshuffles the others. */
+.card { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.card-backup { grid-column: 1 / -1; order: 1; }
+.card-purge, .card-perms { order: 2; }
+
+@media (max-width: 900px) {
+  .wrap { grid-template-columns: 1fr; }
+  .card { grid-column: 1 / -1; }
+}
+.card-head { display: flex; gap: 13px; align-items: flex-start; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+/* Neutral icon tile: red is reserved for focal controls, not every card header. */
+.card-icon { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: var(--r-sm); background: var(--surface-2); color: var(--text-muted); }
+.card-icon svg { width: 16px; height: 16px; }
+.card-head h2 { font-size: 15px; font-weight: 700; }
+.card-head p { margin: 3px 0 0; font-size: 13px; }
+.card-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.row-end { display: flex; justify-content: flex-end; gap: 10px; }
+.sub-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 4px; }
+
+.add-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.add-row .input { flex: 1; min-width: 140px; }
+
+.tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); background: var(--surface-3); padding: 2px 8px; border-radius: var(--r-pill); }
+
+.icon-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.icon-btn:hover { background: var(--surface-3); color: var(--text); }
+.icon-btn.icon-danger:hover { background: rgba(242, 89, 107, 0.14); color: var(--danger); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+.segmented { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.mode-seg { min-width: 150px; }
+/* Equal columns stop fitting on phones; let the options wrap instead. */
+@media (max-width: 560px) {
+  .segmented { display: flex; flex-wrap: wrap; max-width: 100%; }
+  .segmented .seg { flex: 1 1 auto; }
+}
+.seg { border: 0; height: 30px; padding: 0 14px; border-radius: var(--r-xs); font: inherit; font-weight: 600; font-size: 12.5px; color: var(--text-muted); background: transparent; cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); white-space: nowrap; }
+.seg:hover { color: var(--text); }
+.seg.is-active { background: var(--control-active); color: var(--accent-ink); box-shadow: var(--shadow-sm); }
+
+.check-row { display: flex; align-items: center; gap: 9px; font-size: 13px; }
+.check-row input { width: 16px; height: 16px; accent-color: var(--accent-ink); }
+
+.banner { display: flex; align-items: center; gap: 9px; padding: 10px 13px; border-radius: var(--r-sm); font-size: 12.5px; font-weight: 500; background: var(--surface-2); border: 1px solid var(--line); color: var(--text-muted); }
+.banner svg { width: 16px; height: 16px; flex: none; }
+.banner-danger { background: rgba(242, 89, 107, 0.1); border-color: rgba(242, 89, 107, 0.4); color: var(--danger); }
+
+.cmd-preview { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg-sunken); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.cmd-preview code { flex: 1; font-family: var(--font-num); font-size: 13px; overflow-x: auto; white-space: nowrap; }
+.hint { font-size: 12px; margin: 0; }
+.empty-line { padding: 4px 0; }
+
+@media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ---- Health, audit log and restore-diff blocks ------------------------- */
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stat {
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md);
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;
+}
+.stat-value { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.stat-label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-hint { font-size: 11.5px; color: var(--text-faint); }
+
+.chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11.5px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600;
+  padding: 2px 8px; border-radius: var(--r-pill); background: var(--surface-3); color: var(--text-muted);
+}
+.chip-ok { color: var(--ok); }
+.chip-danger { color: var(--danger); }
+
+.list-scroll { max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+.log-row {
+  display: flex; flex-direction: column; gap: 4px; padding: 9px 12px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md);
+}
+.log-message { font-size: 12.5px; color: var(--text); word-break: break-word; }
+
+.preview-report { display: flex; flex-direction: column; gap: 8px; }
+.preview-list { margin: 0; padding-left: 18px; font-size: 13px; display: flex; flex-direction: column; gap: 3px; }
