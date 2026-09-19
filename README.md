@@ -1,11 +1,10 @@
 # 🤖 YetAnotherOverengineeredStoatBot — Stoat Ticket & Moderation Bot
 
-A complete, production-ready moderation and ticket system for [Stoat](https://stoat.chat) servers, built on [`stoatbot.js`](https://www.npmjs.com/package/stoatbot.js) and TypeScript.
+A complete, All-in-one bot with EVERY FEATURE POSSIBLE for [Stoat](https://stoat.chat) servers, built on [`stoatbot.js`](https://www.npmjs.com/package/stoatbot.js) and TypeScript.
 
 ## Features
 
 - **Ticket system** — open / close / delete / transcript, with reaction panel, per-ticket roles, auto-incrementing IDs, and 10-minute cooldown
-- **HTML transcripts** — self-contained `.html` files with avatars, replies, attachments, embeds, system messages, date dividers, and markdown rendering (XSS-sanitized)
 - **Welcome images** — Canva-style drag-and-drop editor on `localhost`, multiple text/image layers, custom fonts, playlists, 3 layouts (classic / compact / banner)
 - **Reaction roles** — message-bound emoji → role mappings
 - **Join roles** — auto-assign roles on member join
@@ -35,9 +34,6 @@ A complete, production-ready moderation and ticket system for [Stoat](https://st
 - Node.js v22.15.0 LTS or higher
 - A Stoat bot account
 - A Stoat server where the bot has: Manage Channels, Manage Permissions/Roles, Send Messages, Upload Files, Read Message History
-- For music only: [`ffmpeg`](https://ffmpeg.org/download.html) on PATH (or set `FFMPEG_PATH`). No Python or Deno needed: the bot downloads the official [yt-dlp](https://github.com/yt-dlp/yt-dlp) release into `bin/` on first start, verifies its SHA-256 against the release checksums, checks for a new release daily (and right away when YouTube starts rejecting it), and lets yt-dlp use the bot's own Node.js to solve YouTube's JavaScript challenges. It prefers the unpacked "onedir" build, which starts about a second faster per song than the single-file build; each version gets its own `bin/yt-dlp-<version>-…` folder, and old folders are deleted once nothing runs from them. Set `YTDLP_PATH` to use your own yt-dlp instead; it is then never updated. On platforms without an official build (BSD, 32-bit ARM musl) the bot uses `yt-dlp` from PATH.
-- For notification providers only: `npm install` also downloads a Chrome build (~150-200 MB) via `puppeteer`. One provider (Pomf.TV) uses it to pass a Cloudflare JS challenge; if Chrome is missing or cannot launch, that provider is skipped and everything else runs normally. In a container or as root, set `PUPPETEER_NO_SANDBOX=1`.
-- For dashboard share links only: `cloudflared`. Windows and Linux download it automatically; macOS needs `brew install cloudflared` (see [Share links](#share-links-remote-dashboard-access)).
 
 ## Setup
 
