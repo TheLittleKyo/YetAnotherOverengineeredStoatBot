@@ -18,43 +18,62 @@ export async function sendDirectMessage(client: any, userId: string, options: an
         await dmChannel.send(options);
         return true;
       }
+      lastError = new Error('User.createDM() returned no usable DMChannel.');
+    } catch (error) {
+      lastError = error;
+    }
+    // User.createDM() already calls GET /users/{userId}/dm. Retrying the same
+    // request cannot bypass a real 403 from Stoat and only creates duplicate
+    // traffic/noisy logs.
+  } else {
+    // Recovery path for clients that expose the API but not User.createDM().
+    try {
+      if (typeof client.api?.get !== 'function') throw new Error('DM API is unavailable.');
+
+      const rawChannel = await client.api.get(`/users/${encodeURIComponent(userId)}/dm`);
+      const channelId = rawChannel?._id || rawChannel?.id;
+      if (!channelId) throw new Error('DM API returned no channel id.');
+
+      let dmChannel = client.channels?.cache?.get?.(channelId) || null;
+      if (!dmChannel && typeof client.channels?.fetch === 'function') {
+        dmChannel = await client.channels.fetch(channelId);
+      }
+      if (!dmChannel && typeof client.channels?._add === 'function') {
+        dmChannel = client.channels._add(rawChannel);
+      }
+      if (!dmChannel || typeof dmChannel.send !== 'function') {
+        throw new Error('The created DM channel could not be resolved.');
+      }
+
+      await dmChannel.send(options);
+      return true;
     } catch (error) {
       lastError = error;
     }
   }
 
-  // Recovery path for stale/missing user objects or a failed SDK lookup.
-  // This is the same GET route used by stoatbot.js's User.createDM(). The
-  // previous fallback incorrectly used POST /users/@me/dms, which is not a
-  // Stoat route and produced a misleading 404.
-  try {
-    if (typeof client.api?.get !== 'function') throw new Error('DM API is unavailable.');
-
-    const rawChannel = await client.api.get(`/users/${encodeURIComponent(userId)}/dm`);
-    const channelId = rawChannel?._id || rawChannel?.id;
-    if (!channelId) throw new Error('DM API returned no channel id.');
-
-    let dmChannel = client.channels?.cache?.get?.(channelId) || null;
-    if (!dmChannel && typeof client.channels?.fetch === 'function') {
-      dmChannel = await client.channels.fetch(channelId);
-    }
-    if (!dmChannel && typeof client.channels?._add === 'function') {
-      dmChannel = client.channels._add(rawChannel);
-    }
-    if (!dmChannel || typeof dmChannel.send !== 'function') {
-      throw new Error('The created DM channel could not be resolved.');
-    }
-
-    await dmChannel.send(options);
-    return true;
-  } catch (error) {
-    lastError = lastError || error;
-  }
-
   if (lastError) {
-    console.warn(`[dm] Message to ${userId} failed: ${(lastError as any)?.message || lastError}`);
+    console.warn(`[dm] Message to ${userId} failed: ${formatDmError(lastError)}`);
   }
   return false;
+}
+
+function formatDmError(error: any): string {
+  const response = error?.response;
+  const status = response?.status;
+  const data = response?.data;
+  const type = data?.type || data?.error || data?.code;
+  const message = data?.message || data?.detail || data?.location;
+  const apiDetail = [type, message].filter(Boolean).join(': ');
+
+  if (status) {
+    return `DM channel creation returned HTTP ${status}${apiDetail ? ` (${apiDetail})` : ''}. ` +
+      (status === 403
+        ? 'Stoat denied opening a DM; the recipient may block DMs, block the bot, or have an account/policy restriction.'
+        : String(error?.message || error));
+  }
+
+  return String(error?.message || error);
 }
 
 async function resolveUser(client: any, userId: string): Promise<any> {
