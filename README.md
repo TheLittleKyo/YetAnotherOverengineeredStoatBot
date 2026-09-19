@@ -21,7 +21,6 @@ Moderation. Music. Tickets. Automation. Economy. Leveling. Games. Logging. Secur
 * [🌐 Dashboard](#-dashboard)
 * [💾 Data & Backups](#-data--backups)
 * [⚙️ Installation](#️-installation)
-* [🧩 Modules](#-modules)
 * [🛠️ Development](#️-development)
 * [🤝 Contributing](#-contributing)
 * [📜 License](#-license)
@@ -101,39 +100,9 @@ Instead of filling your server with a dozen different bots for different jobs, Y
 * Configuration management
 * Administrative utilities
 
----
-
-# 🧩 Modules
-
-YAOSB is split into individual modules so the bot can continue growing without everything becoming one giant mess.
-
-| Module                   | What it does                    |
-| ------------------------ | ------------------------------- |
-| 🎵 **Music**             | Music and audio features        |
-| 🖼️ **Booru**            | Image discovery and media tools |
-| 👋 **Welcome**           | Welcome messages and onboarding |
-| 🎭 **Join Roles**        | Automatically assign roles      |
-| 📊 **Stats**             | Server and member statistics    |
-| 📝 **Logs**              | Detailed event logging          |
-| 🛡️ **Moderation**       | Server moderation tools         |
-| 🤖 **AutoMod**           | Automated moderation            |
-| 🚨 **Anti-Raid**         | Raid protection                 |
-| 📊 **Polls & Giveaways** | Community engagement            |
-| 🏷️ **Tags**             | Custom server tags              |
-| 💰 **Economy**           | Virtual economy                 |
-| 🎂 **Birthdays**         | Birthday tracking               |
-| 🔊 **Temp Voice**        | Temporary voice channels        |
-| ⏰ **Reminders**          | Scheduled reminders             |
-| 💬 **Auto-Responder**    | Automatic responses             |
-| 👍 **Auto-React**        | Automatic reactions             |
-| ⭐ **Leveling**           | XP and progression              |
-| 🔄 **Sync**              | Synchronization tools           |
-| 🎁 **Free Stuff**        | Freebie and giveaway discovery  |
-
 And yes...
 
 ### **There's probably going to be more.**
-
 ---
 
 # 🌐 Dashboard
@@ -143,9 +112,6 @@ YAOSB includes a built-in web dashboard for managing and monitoring your server.
 It provides a convenient interface for configuration and administration without having to dig through endless settings.
 
 The dashboard is designed to run locally by default and can optionally be shared through a secure tunnel when remote access is needed.
-
-> 🔐 **Security matters:** Never expose an unauthenticated dashboard directly to the public internet.
-
 ---
 
 # 💾 Data & Backups
