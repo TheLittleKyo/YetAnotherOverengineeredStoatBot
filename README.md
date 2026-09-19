@@ -175,13 +175,21 @@ Backups can also be previewed before restoration, helping reduce the risk of acc
 * **Node.js 22.15.0 LTS or newer**
 * A Stoat bot account
 * A server where the bot can operate
+* **Bun or npm**
 
 ### 📦 Setup
 
-Clone the repository, install its dependencies, configure your environment, and start the bot.
+Clone the repository, open a terminal in the project folder, then install the dependencies:
 
-YAOSB is designed to be straightforward to self-host while still giving advanced users plenty of room to customize the deployment.
+```bash
+bun install
+```
+or
+```bash
+npm install
+```
 
+Configure the .env file, then start the bot using Start.bat or UpdateAndStart.bat!
 ---
 
 # 🛠️ Development
