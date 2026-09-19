@@ -48,7 +48,6 @@ function makeMember(id: string, calls: Calls, options: { roles?: any[]; failTime
     kick: async () => calls.push(`kick:${id}`),
     addRole: async (roleId: string) => calls.push(`addRole:${id}:${roleId}`),
     removeRole: async (roleId: string) => calls.push(`removeRole:${id}:${roleId}`),
-    sendDM: async () => calls.push(`dm:${id}`),
   };
 }
 
@@ -82,7 +81,11 @@ function makeClient(serverId: string, calls: Calls) {
     user: { id: 'BOT' },
     servers: { cache: new Map([[serverId, server]]), fetch: async () => server },
     channels: { cache: channels, fetch: async (id: string) => channels.get(id) || null },
-    users: { cache: new Map(), fetch: async () => null },
+    // DMs go through the user's DM channel, so every member is DM-able here.
+    users: {
+      cache: new Map(),
+      fetch: async (id: string) => (members.has(id) ? { id, createDM: async () => ({ send: async () => calls.push(`dm:${id}`) }) } : null),
+    },
     api: {
       patch: async (path: string, body: any) => calls.push(`patch:${path}:${JSON.stringify(body?.body)}`),
       put: async (path: string) => calls.push(`put:${path}`),

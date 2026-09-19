@@ -2,6 +2,7 @@ import { config } from '../config.js';
 import { requirePermission } from '../permissions.js';
 import { runWithoutBotPermission } from '../bot-permissions.js';
 import { startDashboard, startCloudflareDashboard } from '../dashboard.js';
+import { sendDirectMessage, describeDmFailure } from '../dm.js';
 
 /** Subcommand words that ask for the public Cloudflare link instead of the local page. */
 const CLOUDFLARE_ALIASES = new Set(['cloudflare', 'cf', 'public', 'remote', 'share', 'tunnel']);
@@ -75,48 +76,19 @@ async function runCloudflare(message, client) {
     `• **Expires** in ~${expiresDays} days, or when you revoke it under **Share access**.\n\n` +
     `⚠️ Anyone who opens this before you gets full control. Don't share it; open it yourself first, then mint scoped links from inside.`;
 
-  const delivered = await dmUser(client, message.authorId, dm);
-  if (delivered) {
+  const delivery = await sendDirectMessage(client, message.authorId, { content: dm });
+  if (delivery.ok) {
     await message.channel?.send({
       content: `✅ Cloudflare dashboard is live — I've DMed you the full-access link. It's single-use, so open it before sharing anything.`,
     });
   } else {
-    // Could not DM — do NOT drop a full-access link into the channel. Point the
-    // caller at the local page and tell them to enable DMs.
+    console.warn(`[dashboard] DM to ${message.authorId} failed (${delivery.reason}): ${delivery.detail}`);
+    // Could not DM — do NOT drop a full-access link into the channel. Say why
+    // the DM failed and point the caller at the local page.
     await message.channel?.send({
       content:
-        `⚠️ Cloudflare dashboard is live, but I couldn't DM you the link (open your DMs and re-run). ` +
+        `⚠️ Cloudflare dashboard is live, but I couldn't DM you the link: ${describeDmFailure(delivery)}. ` +
         `The local page is at ${result.localUrl} on the bot's machine.`,
     });
   }
-}
-
-/** Best-effort DM to a user id. Returns whether the message was delivered. */
-async function dmUser(client, userId: string, content: string): Promise<boolean> {
-  if (!userId) return false;
-  try {
-    let user: any = client?.users?.cache?.get?.(userId) || null;
-    if (!user && typeof client?.users?.fetch === 'function') {
-      user = await client.users.fetch(userId).catch(() => null);
-    }
-    if (!user) return false;
-    // Open the DM channel and send on it ourselves. `user.sendDM` does not await
-    // its own `channel.send`, so it can resolve before the message is delivered
-    // and swallow send-side failures — reporting success when nothing arrived.
-    // Awaiting the send here makes the returned boolean reflect real delivery.
-    if (typeof user.createDM === 'function') {
-      const dm = await user.createDM();
-      if (dm && typeof dm.send === 'function') {
-        await dm.send({ content });
-        return true;
-      }
-    }
-    if (typeof user.sendDM === 'function') {
-      await user.sendDM({ content });
-      return true;
-    }
-  } catch (error: any) {
-    console.warn(`[dashboard] DM to ${userId} failed: ${error?.message || error}`);
-  }
-  return false;
 }
