@@ -1,182 +1,262 @@
-# YetAnotherOverengineeredStoatBot
+# 🦦 YetAnotherOverengineeredStoatBot
 
-### A complete, all-in-one bot with **EVERY FEATURE POSSIBLE** for your Stoat server.
+[![GitHub release](https://img.shields.io/github/release/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](https://github.com/TheLittleKyo/YetAnotherOverengineeredStoatBot/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](https://github.com/TheLittleKyo/YetAnotherOverengineeredStoatBot/issues)
+[![License](https://img.shields.io/github/license/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](https://github.com/TheLittleKyo/YetAnotherOverengineeredStoatBot)
 
-Why run five bots when you can run one ridiculously overengineered one?
+A **complete, all-in-one community bot with EVERY FEATURE POSSIBLE** for Stoat.
 
-**YetAnotherOverengineeredStoatBot (YAOSB)** is an all-in-one community bot built to handle practically everything your server could need — moderation, automation, support, music, games, economy, leveling, utilities, logging, security, and a whole lot more.
+Moderation. Music. Tickets. Automation. Economy. Leveling. Games. Logging. Security. Utilities.
 
-It is designed around one simple idea:
+**If your server needs it, YAOSB probably has it.** 🦦
 
-> **If your server needs it, the bot should probably do it.**
-
-From keeping your community safe to entertaining members, managing support, automating repetitive tasks, tracking activity, and giving administrators powerful tools — YAOSB aims to put it all under one roof.
-
-### 🚀 One Bot. Everything Included.
-
-**🛡️ Moderation & Security**
-Keep your server protected with powerful moderation, automoderation, anti-raid systems, logging, permissions, and safety tools.
-
-**🎫 Support & Community Management**
-Built-in ticketing, support workflows, welcome systems, roles, community utilities, and tools to keep your server organized.
-
-**🤖 Automation**
-Automate the boring stuff. Scheduled actions, auto responses, reactions, reminders, role management, synchronization, and more.
-
-**🎵 Entertainment**
-Music, media, games, polls, giveaways, discovery features, and plenty of things for members to actually use.
-
-**💰 Progression & Engagement**
-Economy systems, leveling, statistics, birthdays, rewards, temporary voice channels, and other features designed to keep your community active.
-
-**⚙️ Administration**
-Powerful configuration, backups, dashboards, data management, server utilities, and granular permission controls.
-
-**📊 Statistics & Logging**
-Keep track of what is happening across your community with detailed statistics and comprehensive logging.
+> ⚠️ **Note:** YetAnotherOverengineeredStoatBot is an independent community project and is not affiliated with or endorsed by Stoat.
 
 ---
 
-## The Goal
+## 📑 Table of Contents
 
-YAOSB isn't trying to be a bot that does **one thing really well**.
-
-It's trying to be the bot where you eventually realize:
-
-**“Wait... we don't need another bot for that either.”**
-
-No giant collection of bots.
-No dozen different dashboards.
-No constantly switching between services.
-
-Just **one ridiculously feature-packed bot** built for Stoat communities.
+* [🚀 Features](#-features)
+* [🌐 Dashboard](#-dashboard)
+* [💾 Data & Backups](#-data--backups)
+* [⚙️ Installation](#️-installation)
+* [🧩 Modules](#-modules)
+* [🛠️ Development](#️-development)
+* [🤝 Contributing](#-contributing)
+* [📜 License](#-license)
 
 ---
 
-## ✨ Feature Packed
+# 🚀 Features
 
-YAOSB currently brings together a huge collection of systems, including:
+YAOSB is built around one ridiculous idea:
 
-| Category              | Features                                                    |
-| --------------------- | ----------------------------------------------------------- |
-| 🛡️ **Moderation**    | Moderation, AutoMod, Anti-Raid, permissions, role hierarchy |
-| 🎫 **Support**        | Tickets, transcripts, support workflows                     |
-| 👋 **Community**      | Welcome messages, join roles, birthdays, tags               |
-| 🤖 **Automation**     | Auto-responder, auto-react, reminders, scheduled systems    |
-| 🎵 **Media**          | Music, media discovery, Booru                               |
-| 🎉 **Engagement**     | Polls, giveaways, leveling, economy                         |
-| 🔊 **Voice**          | Temporary voice channels                                    |
-| 📊 **Statistics**     | Server statistics, activity tracking, logging               |
-| 🎁 **Utilities**      | Free stuff, synchronization, server tools                   |
-| ⚙️ **Administration** | Dashboard, configuration, backups, data management          |
+### **One bot. Everything.**
 
-And that's only the beginning.
+Instead of filling your server with a dozen different bots for different jobs, YAOSB brings an enormous collection of features together into one package.
 
----
+### 🛡️ Moderation & Security
 
-## 🖥️ Built for Your Server
+* Advanced moderation tools
+* Automatic moderation
+* Anti-raid protection
+* Permission management
+* Role hierarchy protection
+* Server logging
+* Moderation logs
+* Safe destructive-action protection
+* Transcript generation and sanitization
 
-YAOSB comes with its own web dashboard for managing the bot and viewing server information without having to dig through endless configuration.
+### 🎫 Community & Support
 
-The dashboard is designed with security in mind and runs locally by default, with optional secure sharing when remote access is needed.
+* Ticket system
+* Support workflows
+* Welcome messages
+* Automatic join roles
+* Custom tags
+* Auto-responses
+* Automatic reactions
+* Birthdays
+* Reminders
+* Community statistics
 
----
+### 🎵 Entertainment
 
-## 🔐 Security First
+* Music
+* Media discovery
+* Booru integration
+* Polls
+* Giveaways
+* Games and community activities
+* Free stuff discovery
 
-Being feature-packed doesn't mean security gets forgotten.
+### 💰 Economy & Progression
 
-YAOSB includes safeguards throughout the system, including:
+* Economy system
+* XP and leveling
+* Rewards
+* User statistics
+* Server statistics
+* Engagement tracking
 
-* Permission and role-hierarchy enforcement
-* Protected administrative functionality
-* Secure dashboard access
-* Scoped dashboard sharing
-* Encrypted sensitive data
-* Sanitized transcripts
-* Safe data handling
-* Graceful shutdown and persistence protection
-* Multi-step safeguards for destructive operations
+### 🤖 Automation
 
----
+* Auto-responder
+* Auto-react
+* Scheduled actions
+* Reminders
+* Automatic roles
+* Temporary voice channels
+* Server synchronization
+* Background tasks
 
-## 💾 Your Data, Your Server
+### 📊 Server Tools
 
-YAOSB keeps its persistent data locally, giving server owners control over their bot's data and configuration.
-
-The project uses SQLite and structured persistent storage while taking care to protect database integrity during normal operation and shutdown.
-
-Backups are supported for server configuration and community data, making it easier to move, restore, or recover a server when needed.
-
----
-
-## 🧩 Modular by Design
-
-Every major system is treated as its own module, making YAOSB easier to expand and maintain.
-
-That means new features can be added without turning the entire bot into an unmaintainable mess.
-
-Or, at least, that's the idea.
-
-After all, the project *is* called **YetAnotherOverengineeredStoatBot**.
-
----
-
-## 🐘 Why "Overengineered"?
-
-Because "YetAnotherStoatBot" wasn't enough.
-
-The goal isn't minimalism.
-
-The goal is to build the **ridiculously complete bot** that somehow has a feature for whatever you thought of five minutes ago.
-
-Need moderation?
-
-**Yep.**
-
-Need tickets?
-
-**Yep.**
-
-Need music?
-
-**Yep.**
-
-Need an economy?
-
-**Yep.**
-
-Need statistics?
-
-**Yep.**
-
-Need automation?
-
-**Yep.**
-
-Need something nobody else thought a bot needed?
-
-...
-
-**Probably.**
+* Detailed logging
+* Server statistics
+* Data management
+* Backup and restore
+* Dashboard
+* Configuration management
+* Administrative utilities
 
 ---
 
-## 📦 Getting Started
+# 🧩 Modules
 
-YAOSB is designed to be self-hosted and runs on Node.js.
+YAOSB is split into individual modules so the bot can continue growing without everything becoming one giant mess.
 
-Installation is intentionally straightforward, while configuration can be customized to fit your server and deployment environment.
+| Module                   | What it does                    |
+| ------------------------ | ------------------------------- |
+| 🎵 **Music**             | Music and audio features        |
+| 🖼️ **Booru**            | Image discovery and media tools |
+| 👋 **Welcome**           | Welcome messages and onboarding |
+| 🎭 **Join Roles**        | Automatically assign roles      |
+| 📊 **Stats**             | Server and member statistics    |
+| 📝 **Logs**              | Detailed event logging          |
+| 🛡️ **Moderation**       | Server moderation tools         |
+| 🤖 **AutoMod**           | Automated moderation            |
+| 🚨 **Anti-Raid**         | Raid protection                 |
+| 📊 **Polls & Giveaways** | Community engagement            |
+| 🏷️ **Tags**             | Custom server tags              |
+| 💰 **Economy**           | Virtual economy                 |
+| 🎂 **Birthdays**         | Birthday tracking               |
+| 🔊 **Temp Voice**        | Temporary voice channels        |
+| ⏰ **Reminders**          | Scheduled reminders             |
+| 💬 **Auto-Responder**    | Automatic responses             |
+| 👍 **Auto-React**        | Automatic reactions             |
+| ⭐ **Leveling**           | XP and progression              |
+| 🔄 **Sync**              | Synchronization tools           |
+| 🎁 **Free Stuff**        | Freebie and giveaway discovery  |
 
-For detailed setup information, configuration options, and development information, see the project documentation.
+And yes...
+
+### **There's probably going to be more.**
 
 ---
 
-## 🤝 Contributing
+# 🌐 Dashboard
 
-Have an idea for another completely unnecessary feature?
+YAOSB includes a built-in web dashboard for managing and monitoring your server.
 
-Perfect.
+It provides a convenient interface for configuration and administration without having to dig through endless settings.
 
-Contributions, improvements, bug fixes, and new ideas are welcome. YAOSB is intentionally designed to keep growing, so there is always room for another system, another integration, or another questionable engineering decision.
+The dashboard is designed to run locally by default and can optionally be shared through a secure tunnel when remote access is needed.
 
+> 🔐 **Security matters:** Never expose an unauthenticated dashboard directly to the public internet.
+
+---
+
+# 💾 Data & Backups
+
+Your server data stays under your control.
+
+YAOSB uses local persistent storage for bot configuration, statistics, settings, and other server data.
+
+### Backup support includes:
+
+* Server configuration
+* Roles
+* Channels
+* Permission configuration
+* Bot settings
+* Community data
+* Message-based content where supported
+
+Backups can also be previewed before restoration, helping reduce the risk of accidentally overwriting server data.
+
+---
+
+# ⚙️ Installation
+
+### 📥 Requirements
+
+* **Node.js 22.15.0 LTS or newer**
+* A Stoat bot account
+* A server where the bot can operate
+
+### 📦 Setup
+
+Clone the repository, install its dependencies, configure your environment, and start the bot.
+
+YAOSB is designed to be straightforward to self-host while still giving advanced users plenty of room to customize the deployment.
+
+---
+
+# 🛠️ Development
+
+YAOSB is actively designed as a modular project, making it easier to add new systems and experiment with new ideas.
+
+The project is built around:
+
+* **Node.js**
+* **TypeScript / JavaScript**
+* **SQLite**
+* Modular bot systems
+* Local persistent storage
+* Web dashboard components
+
+Want to add something?
+
+### **Go for it.**
+
+If it fits the philosophy of the project, there's always room for another feature.
+
+---
+
+# 🫪 Why Is It Called "Overengineered"?
+
+Because it is.
+
+Most bots pick a few things and do them.
+
+YAOSB looked at that approach and decided:
+
+> **“What if we just put everything in one bot?”**
+
+So now there's moderation.
+
+And music.
+
+And economy.
+
+And leveling.
+
+And tickets.
+
+And statistics.
+
+And automation.
+
+And backups.
+
+And a dashboard.
+
+And...
+
+### ...you get the idea.
+
+---
+
+# 🤝 Contributing
+
+Found a bug?
+
+Have an idea?
+
+Want to add another completely unnecessary feature?
+
+Contributions are welcome!
+
+Feel free to open an issue, suggest improvements, or submit a pull request.
+
+Every contribution helps make YAOSB even more ridiculously overengineered.
+
+---
+
+# 📜 License
+
+YAOSB is licensed under the **GNU General Public License v3.0 or later**.
+
+See [`LICENSE`](LICENSE) for more information.
