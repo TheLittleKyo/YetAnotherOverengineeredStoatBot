@@ -24,12 +24,13 @@ export async function sendDirectMessage(client: any, userId: string, options: an
   }
 
   // Recovery path for stale/missing user objects or a failed SDK lookup.
-  // The API returns the same direct-channel shape that stoatbot.js turns into
-  // a DMChannel, and the fetched channel still sends via DMChannel.send().
+  // This is the same GET route used by stoatbot.js's User.createDM(). The
+  // previous fallback incorrectly used POST /users/@me/dms, which is not a
+  // Stoat route and produced a misleading 404.
   try {
-    if (typeof client.api?.post !== 'function') throw new Error('DM API is unavailable.');
+    if (typeof client.api?.get !== 'function') throw new Error('DM API is unavailable.');
 
-    const rawChannel = await client.api.post('/users/@me/dms', { recipient: userId });
+    const rawChannel = await client.api.get(`/users/${encodeURIComponent(userId)}/dm`);
     const channelId = rawChannel?._id || rawChannel?.id;
     if (!channelId) throw new Error('DM API returned no channel id.');
 
@@ -47,7 +48,7 @@ export async function sendDirectMessage(client: any, userId: string, options: an
     await dmChannel.send(options);
     return true;
   } catch (error) {
-    lastError = error;
+    lastError = lastError || error;
   }
 
   if (lastError) {
