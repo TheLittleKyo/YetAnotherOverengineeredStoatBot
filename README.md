@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/TheLittleKyo/YetAnotherOverengineeredStoatBot.svg)](https://github.com/TheLittleKyo/YetAnotherOverengineeredStoatBot)
 
-A **complete, all-in-one community bot with EVERY FEATURE POSSIBLE** for Stoat.
+A **complete, all-in-one community bot with EVERY FEATURE POSSIBLE** for (Stoat.Chat)[Stoat.chat]!
 
 Moderation. Music. Tickets. Automation. Economy. Leveling. Games. Logging. Security. Utilities.
 
