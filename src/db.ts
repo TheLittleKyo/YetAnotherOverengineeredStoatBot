@@ -213,6 +213,11 @@ const MIGRATIONS: string[] = [
   );
   CREATE INDEX sync_mirrors_source ON sync_mirrors (source_id);
   `,
+  // Per-day attachment counts for the overview activity chart (images were
+  // already daily; this adds all-files so the chart can plot attachments too).
+  `
+  ALTER TABLE activity_daily ADD COLUMN attachments INTEGER NOT NULL DEFAULT 0;
+  `,
 ];
 
 let db: DatabaseSyncType | null = null;

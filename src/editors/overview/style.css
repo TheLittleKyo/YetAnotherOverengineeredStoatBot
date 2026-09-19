@@ -9,10 +9,18 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 26px 28px 28px;
+  /* Board gap + card padding are driven by the density setting so Compact /
+     Cozy / Roomy rescale the whole page from these three tokens. */
+  --board-gap: 16px;
+  --card-pad-x: 20px;
+  --card-pad-y: 16px;
   /* Re-derive the text shade from the (possibly user-picked) accent set
      inline on this element; the :root token only knows the default coral. */
   --accent-ink: var(--accent);
 }
+.wrap.is-wide { max-width: none; }
+.wrap[data-density='compact'] { padding: 18px 20px 22px; --board-gap: 10px; --card-pad-x: 16px; --card-pad-y: 12px; }
+.wrap[data-density='roomy'] { padding: 32px 34px 36px; --board-gap: 22px; --card-pad-x: 24px; --card-pad-y: 22px; }
 :root[data-theme='light'] .wrap, :root.theme-light .wrap { --accent-ink: color-mix(in srgb, var(--accent) 72%, #000); }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']):not(.theme-dark) .wrap { --accent-ink: color-mix(in srgb, var(--accent) 72%, #000); }
@@ -60,7 +68,7 @@
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   grid-auto-flow: row dense; /* backfill any gap so there are no empty columns */
-  gap: 16px;
+  gap: var(--board-gap, 16px);
   align-items: stretch;
 }
 .block { min-width: 0; }
@@ -78,14 +86,14 @@
 }
 .card-head {
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 18px 20px 0;
+  padding: calc(var(--card-pad-y, 16px) + 2px) var(--card-pad-x, 20px) 0;
 }
 .card-head-rule { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .card-head-text { min-width: 0; flex: 1; }
 .card-head-text h2 { font-size: 14px; letter-spacing: -0.005em; }
 .card-head-text p { margin: 3px 0 0; font-size: 12px; }
 .card-head-right { margin-left: auto; flex: none; }
-.card-body { padding: 16px 20px 18px; flex: 1; }
+.card-body { padding: var(--card-pad-y, 16px) var(--card-pad-x, 20px) calc(var(--card-pad-y, 16px) + 2px); flex: 1; }
 .card-body-flush { padding: 0; }
 .empty { margin: 0; padding: 28px 20px; text-align: center; font-size: 13px; }
 
@@ -100,7 +108,7 @@
 .badge-danger { background: var(--danger-quiet); color: var(--danger); }
 
 /* ---- KPI cards ---- */
-.kpi-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--board-gap, 16px); }
 .kpi {
   display: flex; flex-direction: column; min-width: 0;
   padding: 16px 16px 14px;
@@ -131,9 +139,28 @@
 .delta-flat { color: var(--text-muted); }
 
 /* ---- Activity chart ---- */
-.legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.chart-controls { display: flex; align-items: center; gap: 14px 18px; flex-wrap: wrap; }
+/* The activity card can be as narrow as one third of the board, and its header
+   controls (series toggles + style switch) are wide, so they always sit on
+   their own full-width row under the title rather than squeezing the subtitle
+   down to one word per line. */
+.block-activity .card-head { flex-wrap: wrap; }
+.block-activity .card-head-right { margin-left: 0; flex-basis: 100%; }
+.legend { display: flex; gap: 6px; flex-wrap: wrap; }
 .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
 .legend-item b { color: var(--text); font-weight: 700; }
+/* Legend chips double as series on/off toggles. */
+.legend-toggle {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 3px 7px; border-radius: var(--r-xs); font: inherit; font-weight: 600; font-size: 11.5px; color: var(--text-muted);
+  transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.legend-toggle:hover { background: var(--surface-2); color: var(--text); }
+.legend-toggle.is-off { opacity: 0.5; }
+.legend-toggle.is-off .dot { background: var(--line-strong) !important; }
+/* Compact segmented control used inline on cards (chart style switch). */
+.seg-sm { padding: 2px; }
+.seg-sm .seg { height: 26px; padding: 0 10px; font-size: 11px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
 .dot-msg { background: var(--accent); }
 .dot-img { background: var(--info); }
@@ -314,10 +341,39 @@
 
 .drawer-section { padding: 18px 20px; border-bottom: 1px solid var(--line); }
 .drawer-title {
+  display: flex; align-items: center; gap: 7px;
   font-family: var(--font); font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--text-faint); margin-bottom: 12px;
 }
+.drawer-title svg { width: 13px; height: 13px; }
 .tiny { font-size: 11.5px; margin: 10px 0 0; }
+
+/* ---- Segmented setting rows (density / refresh / rows) ---- */
+.seg-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.seg-row:last-child { margin-bottom: 0; }
+.seg-row-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+.seg-row .segmented { flex: none; }
+
+/* ---- Switch rows (full-width board, eyebrow) ---- */
+.switch-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 12px; cursor: pointer;
+}
+.switch-row > span { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+.switch-row svg { width: 15px; height: 15px; }
+
+/* ---- Header text fields ---- */
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+.field input[type='text'] {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 10px; font: inherit; font-size: 13px;
+  color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  transition: border-color var(--dur) var(--ease);
+}
+.field input[type='text']:focus { outline: none; border-color: var(--accent-line); }
 
 .swatches { display: flex; flex-wrap: wrap; gap: 9px; }
 .swatch {
@@ -335,16 +391,44 @@
 
 .widget-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-sm); }
 .widget-row {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; flex-direction: column; gap: 8px;
   padding: 10px 12px;
   transition: opacity var(--dur) var(--ease);
 }
 .widget-row + .widget-row { border-top: 1px solid var(--line); }
 .widget-row.is-off .wr-text { opacity: 0.55; }
+.wr-main { display: flex; align-items: center; gap: 12px; }
 .wr-move { display: flex; flex-direction: column; gap: 3px; flex: none; }
 .wr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .wr-label { font-weight: 700; font-size: 13px; }
 .wr-hint { font-size: 11px; }
+
+/* Per-widget width control — a compact segmented control under each row. */
+.wr-span { display: flex; gap: 2px; padding: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.wr-span .span-btn { flex: 1; }
+.span-btn {
+  border: 0; background: transparent; color: var(--text-muted);
+  height: 26px; padding: 0 8px; border-radius: var(--r-xs);
+  font: inherit; font-weight: 700; font-size: 11px; cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.span-btn:hover { color: var(--text); }
+.span-btn.is-active { background: var(--accent); color: var(--on-accent); }
+.widget-row.is-off .wr-span { opacity: 0.55; }
+.compact-row { gap: 0; }
+
+/* ---- Share / backup layout ---- */
+.io-actions { display: flex; gap: 8px; margin-bottom: 10px; }
+.io-actions .btn { flex: 1; justify-content: center; }
+.io-text {
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: 8px 10px; font-family: var(--font-num, monospace); font-size: 11.5px; line-height: 1.5;
+  color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+}
+.io-text:focus { outline: none; border-color: var(--accent-line); }
+.io-note { display: flex; align-items: center; gap: 5px; color: var(--accent-ink); }
+.io-note svg { width: 13px; height: 13px; }
 .toggle {
   flex: none; display: grid; place-items: center;
   width: 36px; height: 30px; border-radius: var(--r-sm);

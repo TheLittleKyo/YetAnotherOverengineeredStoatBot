@@ -35,6 +35,7 @@ type UserTally = {
 type DailyBucket = {
   messages: number;
   images: number;
+  attachments: number;
 };
 
 // Per-server activity, in the shape the old JSON file used (legacy import).
@@ -96,8 +97,8 @@ function importServer(serverId: string, value: ServerActivity) {
   for (const [userId, tally] of Object.entries(value.users)) {
     user.run(serverId, userId, tally.name, tally.avatarId, tally.messages, tally.images, tally.attachments, tally.lastAt);
   }
-  const day = sql('INSERT OR REPLACE INTO activity_daily (server_id, day, messages, images) VALUES (?, ?, ?, ?)');
-  for (const [key, bucket] of Object.entries(value.daily)) day.run(serverId, key, bucket.messages, bucket.images);
+  const day = sql('INSERT OR REPLACE INTO activity_daily (server_id, day, messages, images, attachments) VALUES (?, ?, ?, ?, ?)');
+  for (const [key, bucket] of Object.entries(value.daily)) day.run(serverId, key, bucket.messages, bucket.images, bucket.attachments);
   pruneDaily(serverId);
 }
 
@@ -135,7 +136,7 @@ function normalizeDaily(daily: any): Record<string, DailyBucket> {
   if (!daily || typeof daily !== 'object') return out;
   for (const [day, value] of Object.entries<any>(daily)) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) continue;
-    out[day] = { messages: num(value?.messages), images: num(value?.images) };
+    out[day] = { messages: num(value?.messages), images: num(value?.images), attachments: num(value?.attachments) };
   }
   return out;
 }
@@ -264,9 +265,10 @@ export function recordMessage(client: any, message: any) {
       ).run({ server: serverId, user: authorId, name, avatar: avatarId, images, attachments, at: new Date().toISOString() });
 
       sql(
-        `INSERT INTO activity_daily (server_id, day, messages, images) VALUES (?, ?, 1, ?)
-         ON CONFLICT(server_id, day) DO UPDATE SET messages = messages + 1, images = images + excluded.images`,
-      ).run(serverId, dayKey, images);
+        `INSERT INTO activity_daily (server_id, day, messages, images, attachments) VALUES (?, ?, 1, ?, ?)
+         ON CONFLICT(server_id, day) DO UPDATE SET
+           messages = messages + 1, images = images + excluded.images, attachments = attachments + excluded.attachments`,
+      ).run(serverId, dayKey, images, attachments);
 
       // A new day is the only time the series can outgrow its cap.
       if (prunedOn.get(serverId) !== dayKey) {
@@ -311,7 +313,7 @@ export function previousWindowTotals(
 }
 
 export type LeaderRow = { userId: string; name: string; avatarId: string | null; messages: number; images: number; attachments: number };
-export type DailyPoint = { day: string; messages: number; images: number };
+export type DailyPoint = { day: string; messages: number; images: number; attachments: number };
 
 export type ActivitySummary = {
   totals: { messages: number; images: number; attachments: number };
@@ -343,8 +345,8 @@ export function getActivitySummary({ days = 14, topN = 8, serverId = config.serv
 
   const totalsRow = sql('SELECT messages, images, attachments FROM activity_totals WHERE server_id = ?').get(serverId) as any;
   const dailyMap: Record<string, DailyBucket> = {};
-  for (const row of sql('SELECT day, messages, images FROM activity_daily WHERE server_id = ?').all(serverId) as any[]) {
-    dailyMap[row.day] = { messages: row.messages, images: row.images };
+  for (const row of sql('SELECT day, messages, images, attachments FROM activity_daily WHERE server_id = ?').all(serverId) as any[]) {
+    dailyMap[row.day] = { messages: row.messages, images: row.images, attachments: row.attachments || 0 };
   }
 
   const daily: DailyPoint[] = [];
@@ -357,7 +359,7 @@ export function getActivitySummary({ days = 14, topN = 8, serverId = config.serv
   for (let i = 0; i < safeDays; i += 1) {
     const key = localDayKey(cursor);
     const bucket = dailyMap[key];
-    daily.push({ day: key, messages: bucket?.messages || 0, images: bucket?.images || 0 });
+    daily.push({ day: key, messages: bucket?.messages || 0, images: bucket?.images || 0, attachments: bucket?.attachments || 0 });
     cursor.setDate(cursor.getDate() + 1);
   }
 
