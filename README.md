@@ -90,17 +90,9 @@ npm start
 npm run dev
 ```
 
-### 6. Configure the ticket system at runtime (recommended)
-
-Once the bot is online, an admin with **Manage Server** runs:
-
-```
-!ticket setup <openCategoryId> <closedCategoryId> <transcriptChannelId> <supportRoleId>
-```
-
 IDs can be raw or tagged (`<#channelId>`, `<%roleId>`). The values are stored in `data/config.json` and override anything in `.env`.
 
-### 7. Switch on the features you want
+### 6. Switch on the features you want
 
 Open `!dashboard` → **Modules**. Every feature beyond the core (tickets, embeds, roles, purge, permissions, backups, dashboard) is a module with a bot-wide on/off switch, and a fresh install starts with all of them **off**. A switched-off module costs nothing: its event handlers and timers do not run, its commands reply that it is off, and it is hidden from `!help`. Music, the heaviest one, is not even loaded until it is switched on or used.
 
