@@ -99,30 +99,21 @@ async function dmUser(client, userId: string, content: string): Promise<boolean>
     if (!user && typeof client?.users?.fetch === 'function') {
       user = await client.users.fetch(userId).catch(() => null);
     }
-    if (user) {
-      if (typeof user.sendDM === 'function') {
-        await user.sendDM({ content });
+    if (!user) return false;
+    // Open the DM channel and send on it ourselves. `user.sendDM` does not await
+    // its own `channel.send`, so it can resolve before the message is delivered
+    // and swallow send-side failures — reporting success when nothing arrived.
+    // Awaiting the send here makes the returned boolean reflect real delivery.
+    if (typeof user.createDM === 'function') {
+      const dm = await user.createDM();
+      if (dm && typeof dm.send === 'function') {
+        await dm.send({ content });
         return true;
       }
-      if (typeof user.createDM === 'function') {
-        const dm = await user.createDM().catch(() => null);
-        if (dm && typeof dm.send === 'function') {
-          await dm.send({ content });
-          return true;
-        }
-      }
     }
-    // API fallback: open a DM channel directly.
-    if (client?.api && typeof client.api.post === 'function') {
-      const dm = await client.api.post('/users/@me/dms', { recipient: userId }).catch(() => null);
-      if (dm?.id) {
-        const ch =
-          client.channels?.cache?.get?.(dm.id) || (await client.channels?.fetch?.(dm.id).catch(() => null));
-        if (ch && typeof ch.send === 'function') {
-          await ch.send({ content });
-          return true;
-        }
-      }
+    if (typeof user.sendDM === 'function') {
+      await user.sendDM({ content });
+      return true;
     }
   } catch (error: any) {
     console.warn(`[dashboard] DM to ${userId} failed: ${error?.message || error}`);
