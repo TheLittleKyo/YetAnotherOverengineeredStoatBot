@@ -35,7 +35,6 @@ import { sendServerLog } from './log-system.js';
 import { formatDuration } from './duration.js';
 import { shouldFallbackToRawRequest, stoatRequest } from './stoat-api.js';
 import { debug } from './logger.js';
-import { sendDirectMessage } from './dm.js';
 import { recordAudit, type AuditSource } from './audit.js';
 import { getRoleIds } from './member-utils.js';
 import { clampText, EMBED_DESCRIPTION_MAX } from './embed-limits.js';
@@ -571,6 +570,18 @@ async function setMuteRole(client: any, serverId: string, userId: string, roleId
   throw new Error(`Could not ${add ? 'add' : 'remove'} the mute role: member ${userId} is not reachable.`);
 }
 
+async function dmMember(client: any, serverId: string, userId: string, content: string, member: any): Promise<void> {
+  const target = member || (await fetchMember(client, serverId, userId));
+  if (target && typeof target.sendDM === 'function') {
+    await target.sendDM({ content });
+    return;
+  }
+  const user = client?.users?.cache?.get?.(userId) || (await client?.users?.fetch?.(userId).catch(() => null));
+  const dm = user && typeof user.createDM === 'function' ? await user.createDM() : null;
+  if (!dm || typeof dm.send !== 'function') throw new Error('Could not open a DM channel.');
+  await dm.send({ content });
+}
+
 // ---- Actions ---------------------------------------------------------------
 
 export type ModActionRequest = {
@@ -672,7 +683,7 @@ export async function runModAction(client: any, request: ModActionRequest): Prom
   const notifyFirst = action === 'kick' || action === 'ban';
   let dmFailed = false;
   if (notifyFirst && cfg.dmOnAction) {
-    dmFailed = !(await notifyMember(client, serverId, userId, record));
+    dmFailed = !(await notifyMember(client, serverId, userId, record, member));
   }
 
   let muteMethod: 'timeout' | 'role' | null = null;
@@ -740,7 +751,7 @@ export async function runModAction(client: any, request: ModActionRequest): Prom
   });
 
   if (!notifyFirst && cfg.dmOnAction && action !== 'note') {
-    dmFailed = !(await notifyMember(client, serverId, userId, record));
+    dmFailed = !(await notifyMember(client, serverId, userId, record, member));
   }
 
   await announceCase(client, cfg, record);
@@ -763,14 +774,18 @@ export async function runModAction(client: any, request: ModActionRequest): Prom
 }
 
 /** DM the member about a case. Returns false when the DM could not be delivered. */
-async function notifyMember(client: any, serverId: string, userId: string, record: ModCase): Promise<boolean> {
+async function notifyMember(client: any, serverId: string, userId: string, record: ModCase, member: any): Promise<boolean> {
   const serverName = client?.servers?.cache?.get?.(serverId)?.name || 'the server';
   const lines = [`You were **${ACTION_VERB[record.action]}** ${serverName}.`, `**Reason:** ${record.reason}`];
   if (record.durationMs) lines.push(`**Duration:** ${formatDuration(record.durationMs)}`);
   lines.push(`**Case:** #${record.id}`);
-  const delivery = await sendDirectMessage(client, userId, { content: clampText(lines.join('\n'), 1900) });
-  if (!delivery.ok) debug('moderation', () => `DM to ${userId} failed (${delivery.reason}): ${delivery.detail}`);
-  return delivery.ok;
+  try {
+    await dmMember(client, serverId, userId, clampText(lines.join('\n'), 1900), member);
+    return true;
+  } catch (err) {
+    debug('moderation', () => `DM to ${userId} failed: ${(err as Error)?.message || err}`);
+    return false;
+  }
 }
 
 /**

@@ -17,7 +17,6 @@ import { randomInt as cryptoRandomInt } from 'node:crypto';
 import { renderSvgToPngAsync } from './svg-render.js';
 import { config } from './config.js';
 import { getClientToken, getApiBaseUrl } from './stoat-api.js';
-import { sendDirectMessage, describeDmFailure } from './dm.js';
 import { cleanId } from './id-utils.js';
 import { getMemberIds, getRoleIds } from './member-utils.js';
 import { createArrayFileStore, dataFile } from './json-store.js';
@@ -252,10 +251,18 @@ export async function startCaptchaForUser(
   const serverName = await resolveServerName(client, serverId);
   const content = renderDmMessage(cfg.dmMessage, { serverName, length });
 
-  const delivery = await sendDirectMessage(client, userId, { content, attachments: [file] });
-  if (!delivery.ok) {
-    console.warn(`Captcha DM to ${userId} failed (${delivery.reason}): ${delivery.detail}`);
-    return { ok: false, reason: `dm failed: ${describeDmFailure(delivery)}` };
+  try {
+    const dm = typeof user.createDM === 'function' ? await user.createDM() : null;
+    if (dm && typeof dm.send === 'function') {
+      await dm.send({ content, attachments: [file] });
+    } else if (typeof user.sendDM === 'function') {
+      await user.sendDM({ content, attachments: [file] });
+    } else {
+      return { ok: false, reason: 'cannot DM user' };
+    }
+  } catch (error) {
+    console.warn(`Captcha DM to ${userId} failed:`, error?.message || error);
+    return { ok: false, reason: 'dm failed' };
   }
 
   pending.set(userId, {

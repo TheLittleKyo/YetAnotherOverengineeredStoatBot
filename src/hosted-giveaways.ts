@@ -24,7 +24,6 @@ import { getRoleIds } from './member-utils.js';
 import { recordAudit, type AuditSource } from './audit.js';
 import { clampText, EMBED_DESCRIPTION_MAX, safeEmbed } from './embed-limits.js';
 import { debug } from './logger.js';
-import { sendDirectMessage } from './dm.js';
 
 export const GIVEAWAY_EMOJI = '🎉';
 
@@ -333,7 +332,7 @@ export async function handleGiveawayReaction(ctx: ReactionContext): Promise<bool
 
   const problem = await checkEligibility(ctx.client, giveaway, userId);
   if (problem) {
-    await tellMember(ctx.client, userId, `You could not enter the **${giveaway.prize}** giveaway: ${problem}.`);
+    await tellMember(ctx.client, giveaway, userId, `You could not enter the **${giveaway.prize}** giveaway: ${problem}.`);
     await removeEntryReaction(ctx.client, giveaway, userId);
     return true;
   }
@@ -376,9 +375,20 @@ async function removeEntryReaction(client: any, giveaway: Giveaway, userId: stri
   }
 }
 
-async function tellMember(client: any, userId: string, content: string): Promise<void> {
-  const delivery = await sendDirectMessage(client, userId, { content });
-  if (!delivery.ok) debug('giveaways', () => `DM to ${userId} failed (${delivery.reason}): ${delivery.detail}`);
+async function tellMember(client: any, giveaway: Giveaway, userId: string, content: string): Promise<void> {
+  try {
+    const server = client?.servers?.cache?.get?.(giveaway.serverId);
+    const member = server?.members?.cache?.get?.(userId) || (await server?.members?.fetch?.(userId).catch(() => null));
+    if (member?.sendDM) {
+      await member.sendDM({ content });
+      return;
+    }
+    const user = client?.users?.cache?.get?.(userId) || (await client?.users?.fetch?.(userId).catch(() => null));
+    const dm = user?.createDM ? await user.createDM() : null;
+    if (dm?.send) await dm.send({ content });
+  } catch (error) {
+    debug('giveaways', () => `DM failed: ${(error as Error)?.message || error}`);
+  }
 }
 
 // ---- Drawing ---------------------------------------------------------------
@@ -535,7 +545,7 @@ async function announceWinners(client: any, giveaway: Giveaway, winners: string[
   }
 
   for (const userId of winners) {
-    await tellMember(client, userId, `🎉 You won **${giveaway.prize}**! Check <#${giveaway.channelId}> to claim it.`);
+    await tellMember(client, giveaway, userId, `🎉 You won **${giveaway.prize}**! Check <#${giveaway.channelId}> to claim it.`);
   }
 }
 

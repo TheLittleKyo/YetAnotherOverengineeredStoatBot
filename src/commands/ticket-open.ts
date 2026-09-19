@@ -5,7 +5,6 @@ import { TicketPermissions, isTicketStaff } from '../permissions.js';
 import { logTicketAction } from '../log-system.js';
 import { MessageEmbed } from 'stoatbot.js';
 import { sleep } from '../async-utils.js';
-import { sendDirectMessage, describeDmFailure } from '../dm.js';
 
 export const DEFAULT_TICKET_REASON = 'No reason provided';
 const TICKET_CREATE_COOLDOWN_MS = 10 * 60 * 1000;
@@ -336,12 +335,34 @@ async function sendTicketOpenResponse({
   responseChannel?: any;
   content: string;
 }): Promise<void> {
-  const delivery = await sendDirectMessage(client, userId, { content });
-  if (delivery.ok) return;
-  console.warn(`Failed to send ticket open response in DM to ${userId} (${delivery.reason}): ${delivery.detail}`);
+  try {
+    let user = client.users?.cache?.get?.(userId) || null;
+    if (!user) {
+      user = await client.users?.fetch?.(userId).catch(() => null);
+    }
 
-  // Fallback in case DM is not available (the user blocked the bot, no shared server, etc.)
-  const fallbackMessage = await responseChannel?.send({ content: `${content}\n_(I couldn't DM you: ${describeDmFailure(delivery)}.)_` });
+    if (user) {
+      // stoatbot.js usually requires a DM channel to exist first.
+      // Creating/opening it explicitly is more reliable than user.send alone.
+      if (typeof user.createDM === 'function') {
+        const dmChannel = await user.createDM().catch(() => null);
+        if (dmChannel?.send) {
+          await dmChannel.send({ content });
+          return;
+        }
+      }
+
+      if (typeof user.send === 'function') {
+        await user.send({ content });
+        return;
+      }
+    }
+  } catch (error) {
+    console.warn(`Failed to send ticket open response in DM to ${userId}:`, getReadableError(error));
+  }
+
+  // Fallback in case DM is not available (privacy settings, blocked DMs, etc.)
+  const fallbackMessage = await responseChannel?.send({ content });
 
   // Auto-clean fallback channel responses after 10s to reduce clutter.
   if (fallbackMessage?.delete) {
