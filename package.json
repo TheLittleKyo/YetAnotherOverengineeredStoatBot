@@ -1,6 +1,6 @@
 {
   "name": "yet-another-overengineered-stoat-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A complete ticket system bot for Stoat using stoatbot.js and TypeScript",
   "type": "module",
   "main": "src/index.ts",
