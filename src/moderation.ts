@@ -33,6 +33,7 @@ import { config } from './config.js';
 import { registerDataFileHooks, registerVirtualDataFile } from './json-store.js';
 import { sendServerLog } from './log-system.js';
 import { formatDuration } from './duration.js';
+import { sendDirectMessage } from './dm.js';
 import { shouldFallbackToRawRequest, stoatRequest } from './stoat-api.js';
 import { debug } from './logger.js';
 import { recordAudit, type AuditSource } from './audit.js';
@@ -571,15 +572,9 @@ async function setMuteRole(client: any, serverId: string, userId: string, roleId
 }
 
 async function dmMember(client: any, serverId: string, userId: string, content: string, member: any): Promise<void> {
-  const target = member || (await fetchMember(client, serverId, userId));
-  if (target && typeof target.sendDM === 'function') {
-    await target.sendDM({ content });
-    return;
+  if (!(await sendDirectMessage(client, userId, { content }))) {
+    throw new Error('Could not open a DM channel.');
   }
-  const user = client?.users?.cache?.get?.(userId) || (await client?.users?.fetch?.(userId).catch(() => null));
-  const dm = user && typeof user.createDM === 'function' ? await user.createDM() : null;
-  if (!dm || typeof dm.send !== 'function') throw new Error('Could not open a DM channel.');
-  await dm.send({ content });
 }
 
 // ---- Actions ---------------------------------------------------------------

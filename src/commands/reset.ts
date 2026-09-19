@@ -8,6 +8,7 @@ import { normalizeMentionOrId } from '../id-utils.js';
 import { sleep } from '../async-utils.js';
 import { DATA_DIR, assertSafeDataDir, reloadAllDataFiles } from '../json-store.js';
 import { wipeDatabase } from '../db.js';
+import { sendDirectMessage } from '../dm.js';
 
 const RESET_CONFIRM_TIMEOUT_MS = 60_000;
 const DELETE_PACE_MS = 300;
@@ -192,55 +193,7 @@ export async function resetCommand(message, args, client) {
   let delivered = false;
   try {
     if (requesterId) {
-      // Try to find the user object.
-      let dmChannel: any = null;
-      try {
-        dmChannel = client.users?.cache?.get?.(requesterId) || null;
-        if (!dmChannel && typeof client.users?.fetch === 'function') {
-          dmChannel = await client.users.fetch(requesterId);
-        }
-      } catch {
-        dmChannel = null;
-      }
-
-      // If the user object has a DM channel, send directly.
-      if (dmChannel) {
-        try {
-          if (typeof dmChannel.send === 'function') {
-            await dmChannel.send({ content: summary });
-            delivered = true;
-          } else if (typeof dmChannel.createDM === 'function') {
-            const dm = await dmChannel.createDM();
-            if (dm && typeof dm.send === 'function') {
-              await dm.send({ content: summary });
-              delivered = true;
-            }
-          }
-        } catch (sendErr: any) {
-          console.warn(`[reset] DM send to user failed: ${sendErr?.message || sendErr}`);
-        }
-      }
-
-      // If that didn't work, try opening a DM via the API.
-      if (!delivered && client?.api && typeof client.api.post === 'function') {
-        try {
-          const dm = await client.api.post('/users/@me/dms', { recipient: requesterId });
-          if (dm?.id) {
-            let dmCh: any = null;
-            try {
-              dmCh = client.channels?.cache?.get?.(dm.id) || await client.channels?.fetch?.(dm.id);
-            } catch {
-              dmCh = null;
-            }
-            if (dmCh && typeof dmCh.send === 'function') {
-              await dmCh.send({ content: summary });
-              delivered = true;
-            }
-          }
-        } catch (apiDmErr: any) {
-          console.warn(`[reset] DM via API failed: ${apiDmErr?.message || apiDmErr}`);
-        }
-      }
+      delivered = await sendDirectMessage(client, requesterId, { content: summary });
     }
   } catch (dmError: any) {
     console.warn(`[reset] Could not DM summary to requester: ${dmError?.message || dmError}`);

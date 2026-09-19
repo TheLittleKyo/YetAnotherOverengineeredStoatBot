@@ -20,6 +20,7 @@ import { getClientToken, getApiBaseUrl } from './stoat-api.js';
 import { cleanId } from './id-utils.js';
 import { getMemberIds, getRoleIds } from './member-utils.js';
 import { createArrayFileStore, dataFile } from './json-store.js';
+import { sendDirectMessage } from './dm.js';
 
 export type CaptchaConfig = {
   serverId: string;
@@ -251,17 +252,8 @@ export async function startCaptchaForUser(
   const serverName = await resolveServerName(client, serverId);
   const content = renderDmMessage(cfg.dmMessage, { serverName, length });
 
-  try {
-    const dm = typeof user.createDM === 'function' ? await user.createDM() : null;
-    if (dm && typeof dm.send === 'function') {
-      await dm.send({ content, attachments: [file] });
-    } else if (typeof user.sendDM === 'function') {
-      await user.sendDM({ content, attachments: [file] });
-    } else {
-      return { ok: false, reason: 'cannot DM user' };
-    }
-  } catch (error) {
-    console.warn(`Captcha DM to ${userId} failed:`, error?.message || error);
+  const delivered = await sendDirectMessage(client, userId, { content, attachments: [file] });
+  if (!delivered) {
     return { ok: false, reason: 'dm failed' };
   }
 
