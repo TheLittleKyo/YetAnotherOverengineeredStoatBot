@@ -2293,13 +2293,13 @@ button.server-switch:disabled .server-chevron { opacity: 0.4; }
 
 /* ---- Share-access panel ---- */
 .share-overlay {
-  position: fixed; inset: 0; z-index: 50;
+  position: fixed; inset: 0; z-index: 1000;
   display: grid; place-items: center; padding: 20px;
   background: var(--scrim);
 }
-/* A class-level display: wins over the bare [hidden] UA rule, so restore it. */
-.share-overlay[hidden], .share-result[hidden] { display: none; }
+.share-overlay[hidden] { display: none !important; }
 .share-modal {
+  position: relative; z-index: 1;
   width: 100%; max-width: 440px; max-height: 88dvh; overflow-y: auto;
   background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-sm);
   box-shadow: var(--shadow-lg);
